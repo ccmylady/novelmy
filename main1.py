@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 import random
 
 #读取给定网址内容（待读网址，用户抬头）
-def get_urlContent(url,user_headers):
+def get_urlContent(url,user_headers,content_replaces):
     '''读取给定网址的指定内容及下一待读取网址'''
 
     #清空内容，以便多次读取
@@ -39,15 +39,22 @@ def get_urlContent(url,user_headers):
             else:
                 novel_section_content =url+'未检索到内容'
 
-            #指定内容文本替换
-            content_replace_1=' '
-            content_replace_2=' '
+
             #判断是否检索到id='nrl',类='fy'。如有，
             if novel_soup.select('#nr1 .fy'):
                 content_replace_3 = novel_soup.select('#nr1 .fy')[0].get_text()
                 novel_section_content=novel_section_content.replace(content_replace_3,'')
 
-            novel_section_content=novel_section_content.replace(content_replace_1,'').replace(content_replace_2,'').replace(u'\xa0','')
+            #指定内容文本替换
+            #content_replace_1=' '
+            #content_replace_2=' '
+
+            #novel_section_content=novel_section_content.replace(content_replace_1,'').replace(content_replace_2,'').replace(u'\xa0','')
+
+            # 指定内容文本替换为空
+            if content_replaces:
+                for content_replace in content_replaces:
+                    novel_section_content = novel_section_content.replace(content_replace, '')
 
 
             #print(content_replace_3)
@@ -111,18 +118,30 @@ if __name__ == '__main__':
     user_headers = {'User-Agent': user_agent}
     #print(user_headers)
 
-    #url_novels=list(input('请输入小说网址,可多个,以分号为分隔符:\n').split(','))
-    url_novels = []
-    url_novel_input_stop = ['stop', '']
-    while True:
-        url_novel_input = input('请输入小说网址\n')
-        if url_novel_input.lower() in url_novel_input_stop:
-            break
-        elif url_novel_input not in url_novels:
-            url_novels.append(url_novel_input)
-        else:
-            print('地址重复，请重新输入，或结束输入或直接回车')
-        print(url_novels)
+    #直输整个列表，删除重复地址，并保持原来排序
+    url_novels_unset = list(input('请输入小说网址,可多个,以","为分隔符:\n').split(','))
+    url_novels = list(set(url_novels_unset))
+    url_novels.sort(key=url_novels_unset.index)
+    print(url_novels)
+
+    # 依次输入小说网址，以STOP或直接回车结束
+    # url_novels = []
+    # url_novel_input_stop = ['stop', '']
+    # while True:
+    #     url_novel_input = input('请输入小说网址\n')
+    #     if url_novel_input.lower() in url_novel_input_stop:
+    #         break
+    #     elif url_novel_input not in url_novels:
+    #         url_novels.append(url_novel_input)
+    #     else:
+    #         print('地址重复，请重新输入，或结束输入或直接回车')
+    #     print(url_novels)
+
+    #直输整个替换列表，删除重复内容，并保持原来排序
+    content_replaces_unset = list(input('请输入替换内容,可多个,以","为分隔符:\n').split(','))
+    content_replaces = list(set(content_replaces_unset))
+    content_replaces.sort(key=content_replaces_unset.index)
+    print(content_replaces)
 
     for url_novel in url_novels:
         #待读取的网址
@@ -140,7 +159,7 @@ if __name__ == '__main__':
         while True:
             print(url_novel)
             #调用读取函数
-            novel_all=get_urlContent(url_novel,user_headers)
+            novel_all=get_urlContent(url_novel,user_headers,content_replaces)
             #print(novel_all[0])
             #print(novel_all[1])
             #print(type(novel_all[1]))
