@@ -91,10 +91,10 @@ def get_urlContent(url,user_headers,content_replaces):
 
 def txt_name(txt_name_num):
     '''随机生成文件名称'''
-    j = txt_name_num
+    def_j = txt_name_num
     txt_name_pre = []
     # sample(seq, n) 从序列seq中选择n个随机且独立的元素；
-    txt_name_pre = ''.join(str(i) for i in random.sample(range(0, 9), j))
+    txt_name_pre = ''.join(str(def_i) for def_i in random.sample(range(0, 9), def_j))
     txt_name=txt_name_pre+'.txt'
     #print(type(txt_name))
     return txt_name
@@ -119,10 +119,16 @@ if __name__ == '__main__':
     #print(user_headers)
 
     #直输整个列表，删除重复地址，并保持原来排序
-    url_novels_unset = list(input('请输入小说网址,可多个,以","为分隔符:\n').split(','))
+    url_novels_unset = list(input('请输入小说网址,可多个,以","为分隔符:').split(','))
     url_novels = list(set(url_novels_unset))
     url_novels.sort(key=url_novels_unset.index)
-    print(url_novels)
+    print(url_novels,'\n')
+
+    if not url_novels:
+        print('无小说抓取')
+        exit()
+
+    #print('检查以下程序是否被执行')
 
     # 依次输入小说网址，以STOP或直接回车结束
     # url_novels = []
@@ -138,49 +144,52 @@ if __name__ == '__main__':
     #     print(url_novels)
 
     #直输整个替换列表，删除重复内容，并保持原来排序
-    content_replaces_unset = list(input('请输入替换内容,可多个,以","为分隔符:\n').split(','))
+    content_replaces_unset = list(input('请输入替换内容,可多个,以","为分隔符:').split(','))
     content_replaces = list(set(content_replaces_unset))
     content_replaces.sort(key=content_replaces_unset.index)
-    print(content_replaces)
+    print(content_replaces,'\n')
 
     for url_novel in url_novels:
-        #待读取的网址
-        #url_novel = 'www.163.com'
-        #print(url_novel)
-        #获取次末级网址
-        last_url=url_novel[0:url_novel.rfind('/', 1) + 1]
-        print(last_url)
-        #获取域名
-        pre_url = urlparse(url_novel).scheme+'://'+urlparse(url_novel).netloc
-        #产生一个5位的文件名
-        txt_name=txt_name(5)
-        #用i来记录读取次数
-        i=1
-        while True:
-            print(url_novel)
-            #调用读取函数
-            novel_all=get_urlContent(url_novel,user_headers,content_replaces)
-            #print(novel_all[0])
-            #print(novel_all[1])
-            #print(type(novel_all[1]))
-            #print(novel_all[2])
+        if url_novel:
+            #待读取的网址
+            #url_novel = 'www.163.com'
+            #print(url_novel)
+            #获取次末级网址
+            last_url=url_novel[0:url_novel.rfind('/', 1) + 1]
+            print(last_url)
+            #获取域名
+            pre_url = urlparse(url_novel).scheme+'://'+urlparse(url_novel).netloc
+            #产生一个5位的文件名
+            txt_name=txt_name(5)
+            #用i来记录读取次数
+            i=1
+            while True:
+                print(url_novel)
+                #调用读取函数
+                novel_all=get_urlContent(url_novel,user_headers,content_replaces)
+                #print(novel_all[0])
+                #print(novel_all[1])
+                #print(type(novel_all[1]))
+                #print(novel_all[2])
 
-            # 调用写入函数，写入章节号
-            # novel_section_no='第'+str(i)+'节'
-            novel_section_no = '第 %d 节\n' % (i)
-            write_txt(novel_section_no, txt_name)
-            #调用写入函数，写入内容
-            write_txt(novel_all[1],txt_name)
-            print(i)
-            print(novel_all[2])
-            #print('kuhong' in novel_all[2])
-            #判断，当下一页网址跳回至根目录时，结束。否则继续。
-            if (pre_url+novel_all[2] == last_url):
-                break
-            if(pre_url not in novel_all[2]):
-                url_novel=pre_url+novel_all[2]
-            else:
-                url_novel=novel_all[2]
-            i+=1
-            #if i==5:
-                #break
+                # 调用写入函数，写入章节号
+                # novel_section_no='第'+str(i)+'节'
+                novel_section_no = '第 %d 节\n' % (i)
+                write_txt(novel_section_no, txt_name)
+                #调用写入函数，写入内容
+                write_txt(novel_all[1],txt_name)
+                print(i)
+                print(novel_all[2])
+                #print('kuhong' in novel_all[2])
+                #判断，当下一页网址跳回至根目录时，结束。否则继续。
+                if (pre_url+novel_all[2] == last_url):
+                    break
+                if(pre_url not in novel_all[2]):
+                    url_novel=pre_url+novel_all[2]
+                else:
+                    url_novel=novel_all[2]
+                i+=1
+                #if i==5:
+                    #break
+        else:
+            pass

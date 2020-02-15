@@ -21,12 +21,11 @@ def get_urlContent(url,user_headers):
     #novel_section_content=novel_section_content.replace("<br />","\n")
     #novel_section_content=re.sub( '\s+', '\r\n\t', novel_section_content).strip('\r\n')
 
-    url_next_link = novel_soup.select('a#linkNext')[0]
-    url_next=url_next_link['href']
+    url_next_link = novel_soup.select('a#linkNext')[0]['href']
 
     urlContent.append(novel_section_name)
     urlContent.append(novel_section_content)
-    urlContent.append(url_next)
+    urlContent.append(url_next_link)
     return urlContent
 
 def write_txt(contents):
