@@ -56,6 +56,7 @@ def get_urlContent(url,user_headers,content_replaces):
                 for content_replace in content_replaces:
                     novel_section_content = novel_section_content.replace(content_replace, '')
 
+            novel_section_content = novel_section_content.replace(u'\xa0', '')
 
             #print(content_replace_3)
             #print(novel_section_content)
@@ -89,10 +90,10 @@ def get_urlContent(url,user_headers,content_replaces):
         except requests.exceptions.RequestException:
             i_try+=1
 
-def txt_name(txt_name_num):
+def function_txt_name(txt_name_num):
     '''随机生成文件名称'''
     def_j = txt_name_num
-    txt_name_pre = []
+    #txt_name_pre = []
     # sample(seq, n) 从序列seq中选择n个随机且独立的元素；
     txt_name_pre = ''.join(str(def_i) for def_i in random.sample(range(0, 9), def_j))
     txt_name=txt_name_pre+'.txt'
@@ -160,7 +161,7 @@ if __name__ == '__main__':
             #获取域名
             pre_url = urlparse(url_novel).scheme+'://'+urlparse(url_novel).netloc
             #产生一个5位的文件名
-            txt_name=txt_name(5)
+            txt_name=function_txt_name(5)
             #用i来记录读取次数
             i=1
             while True:
