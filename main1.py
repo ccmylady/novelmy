@@ -90,10 +90,10 @@ def get_urlContent(url,user_headers,content_replaces):
         except requests.exceptions.RequestException:
             i_try+=1
 
-def function_txt_name(txt_name_num):
+def name_txt(txt_name_num):
     '''随机生成文件名称'''
     def_j = txt_name_num
-    #txt_name_pre = []
+    # txt_name_pre = []
     # sample(seq, n) 从序列seq中选择n个随机且独立的元素；
     txt_name_pre = ''.join(str(def_i) for def_i in random.sample(range(0, 9), def_j))
     txt_name=txt_name_pre+'.txt'
@@ -150,6 +150,9 @@ if __name__ == '__main__':
     content_replaces.sort(key=content_replaces_unset.index)
     print(content_replaces,'\n')
 
+    # 产生一个5位的文件名，写入同一文件
+    txt_name=name_txt(5)
+
     for url_novel in url_novels:
         if url_novel:
             #待读取的网址
@@ -160,8 +163,8 @@ if __name__ == '__main__':
             print(last_url)
             #获取域名
             pre_url = urlparse(url_novel).scheme+'://'+urlparse(url_novel).netloc
-            #产生一个5位的文件名
-            txt_name=function_txt_name(5)
+            #产生一个5位的文件名，写入不同文件
+            #txt_name=name_txt(5)
             #用i来记录读取次数
             i=1
             while True:
@@ -178,6 +181,11 @@ if __name__ == '__main__':
                 novel_section_no = '第 %d 节\n' % (i)
                 write_txt(novel_section_no, txt_name)
                 #调用写入函数，写入内容
+                if novel_all is None:
+                    url_novel_unread=url_novel+'未读取到\n\n'
+                    write_txt(url_novel_unread, txt_name)
+                    break
+                #print('以下是小说内容测试',novel_all)
                 write_txt(novel_all[1],txt_name)
                 print(i)
                 print(novel_all[2])
